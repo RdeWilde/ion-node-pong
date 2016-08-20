@@ -45,7 +45,7 @@ var Game = function(canvas) {
 
             window.canvasCtx = canvas.ctx;
 
-            canvas.setDimensions(500, 250);
+            canvas.setDimensions(1000, 500);
             canvas.startObjectsOnCanvas();
 
             // Bind mousemove event to the onMouseMove function

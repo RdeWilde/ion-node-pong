@@ -3,7 +3,7 @@
  */
 var Connection = function(game) {
 
-    var SERVER_ADDR = '127.0.0.1',
+    var SERVER_ADDR = 'ion-pong.herokuapp.com',
 
     PORT = process.env.PORT || 3000,
 
