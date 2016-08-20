@@ -5,7 +5,7 @@ var Connection = function(game) {
 
     var SERVER_ADDR = '127.0.0.1',
 
-    PORT = 3000,
+    PORT = process.env.PORT || 3000,
 
     // loop index
     i = 0,
