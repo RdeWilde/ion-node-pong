@@ -2,7 +2,6 @@
  * Canvas Name Space
  */
 var Canvas = function() {
-
     var that = this,
     // Canvas Element Object
     _canvasObj,
@@ -48,7 +47,7 @@ var Canvas = function() {
      * algorithm redraw iteration
      */
     clear = function() {
-        _canvasObj.setAttribute('height', 250);
+        _canvasObj.setAttribute('height', 500);
     },
 
 
@@ -87,7 +86,6 @@ var Canvas = function() {
      * Defines the canvas bitmap dimensions
      */
     this.setDimensions = function (width, height) {
-
         if(!width || !height) {
             throw new Error("Missing parameters to set canvas dimensions");
         }
@@ -101,7 +99,6 @@ var Canvas = function() {
      * Sets positions of the players paddles
      */
     _setPaddles = function () {
-
         // Put paddles on the abscissa: 5 px left, -5 px right
         that.player1.x = _canvasObj.width -5;
         that.player2.x = 2;
@@ -123,7 +120,6 @@ var Canvas = function() {
      * Sets the ball start point in the canvas
      */
     _setBallStartPosition = function () {
-
         that.ball.x = _canvasObj.width / 2;
         that.ball.y = _canvasObj.height / 2;
     },
@@ -133,7 +129,6 @@ var Canvas = function() {
      * Mouse limits moviment function
      */
     _setMouse = function() {
-
       canvasMinY = _canvasObj.offsetTop;
       canvasMaxY = canvasMinY + _canvasObj.height;
     },
@@ -143,9 +138,7 @@ var Canvas = function() {
      * Paddles control function
      */
     this.onMouseMove = function(evt) {
-
       if (evt.pageY > canvasMinY && (evt.pageY + that.paddle_h) < canvasMaxY) {
-
           if (game.playerID == 'p1')
               that.player1.y = parseInt(evt.pageY - canvasMinY);
           else
@@ -158,7 +151,6 @@ var Canvas = function() {
      * Start the game objects on the canvas
      */
     this.startObjectsOnCanvas = function () {
-
         _setPaddles();
         _setLimits();
         _setBallStartPosition();
@@ -191,7 +183,6 @@ var Canvas = function() {
 
         // If the ball is going to pass the game area
         if (this.ball.x + this.ball.dx + this.paddle_w + 5 > WIDTH) {
-
             // Inverts the ball displacement on abscissas
             // if the ball collided with the paddle
             if (this.ball.y > this.player1.y && this.ball.y < this.player1.y + this.paddle_h) {
@@ -203,7 +194,6 @@ var Canvas = function() {
 
         // If the next moviment of the ball is smaller than the paddle
         }else if (this.ball.x + this.ball.dx < this.paddle_w + 5){
-
             // Inverts the ball displacement if it collided with the paddle
             if (this.ball.y > this.player2.y && this.ball.y < this.player2.y + this.paddle_h) {
                 this.ball.dx = -this.ball.dx;

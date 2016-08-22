@@ -2,7 +2,6 @@
  * Game Name Space
  */
 var Game = function(canvas) {
-
     // Controls the game start
     var STARTED = false,
 
@@ -66,7 +65,6 @@ var Game = function(canvas) {
      * Function that triggers messages to players and then redraw the canvas
      */
     beforeDraw = function() {
-
         if (that.playerID == 'p1'){
             connection.msg({p1: canvas.player1});
         } else {
@@ -81,7 +79,6 @@ var Game = function(canvas) {
      * Writes log message on log div
      */
     this.writeLog = function (message) {
-
         var content = document.createTextNode(message);
         var lineBreak = document.createElement("br");
 
@@ -93,7 +90,6 @@ var Game = function(canvas) {
      * Restarts the game
      */
     this.restart = function () {
-
         clearInterval(INTERVAL_ID);
         canvas.startObjectsOnCanvas();
         setTimeout(function () {
@@ -105,7 +101,6 @@ var Game = function(canvas) {
      * Score points for a player
      */
     this.score = function (player) {
-
         if (player == "p1") {
             scores.p1.points++;
             scores.p1.board.textContent = scores.p1.points;
@@ -126,13 +121,10 @@ var Game = function(canvas) {
      * Checks if there is a Winner
      */
     isThereAWinner = function () {
-
         if(scores.p1.points >= MATCH_POINTS) {
-
             this.writeLog("Player 1 won the game!");
             return true;
         } else if(scores.p2.points >= MATCH_POINTS) {
-
             this.writeLog("Player 2 won the game!");
             return true;
         }
@@ -144,7 +136,6 @@ var Game = function(canvas) {
      * Function to end the game
      */
     this.endGame = function() {
-
         if(STARTED) {
             STARTED = false;
             clearInterval(INTERVAL_ID);
@@ -161,7 +152,6 @@ var Game = function(canvas) {
      * this example: 2fz06wghkt9
      */
     createAGameHash = function () {
-
         return Math.random().toString(36).substring(7);
     };
 
@@ -170,7 +160,6 @@ var Game = function(canvas) {
      * Callback for creating a new game
      */
     createGameCallback = function (event) {
-
         that.playerID = 'p1';
         connection.connect();
 
@@ -190,13 +179,14 @@ var Game = function(canvas) {
      * Callback for joining an existing game
      */
     joinGameCallback = function (event) {
-
         that.playerID = 'p2';
         joinButton.style.display = "none";
         createButton.style.display = "none";
         joinInput.style.display = "block";
         joinInput.addEventListener("keyup", function (event) {
-            connection.connect();
+            if (typeof connection.socket == "undefined" || connection.socket.connected) {
+                connection.connect();
+            }
         });
 
         if(gameHash) {
@@ -214,7 +204,6 @@ var Game = function(canvas) {
      * Callback for starting the game
      */
     startGameCallback = function (event) {
-
         connection.msg('start');
 
         event.preventDefault();

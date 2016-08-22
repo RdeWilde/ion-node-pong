@@ -2,11 +2,9 @@
  * Server Connection Name Space
  */
 var Connection = function(game) {
+    var SERVER_ADDR = location.host,
 
-    var SERVER_ADDR = 'ion-pong.herokuapp.com',
-
-    PORT = process.env.PORT || 3000,
-
+//    PORT = location.port || 5000,
     // loop index
     i = 0,
 
@@ -21,9 +19,7 @@ var Connection = function(game) {
      * param message: data to send to server
      */
     this.msg = function (message) {
-
           this.socket.send(message, game.playerID);
-          console.log(message);
     },
 
 
@@ -31,7 +27,6 @@ var Connection = function(game) {
      * Callback for client connection on server
      */
     onConnectCallback = function() {
-
         game.writeLog("Player " + game.playerID + " connected");
     },
 
@@ -40,25 +35,20 @@ var Connection = function(game) {
      * When server sends a message this function is called
      */
     onMessageCallback = function(data) {
-
         /* Triggers the start event to begin the game */
         if (data === 'start') {
-
             h3.textContent = "The best player win!";
 
             var startEvent = new Event('start');
             window.dispatchEvent(startEvent);
 
         } else if (data.erro) {
-
             game.writeLog(data.erro);
         } else {
             /* sets the other player positions on canvas */
-            if (game.playerID == 'p1') {
-
+            if (game.playerID == 'p1' && typeof data.p2 !== "undefined") {
                 canvas.player2 = data.p2;
-            } else {
-
+            } else if (typeof data.p1 !== "undefined") {
                 canvas.player1 = data.p1;
             }
         }
@@ -70,7 +60,6 @@ var Connection = function(game) {
      * message to the user that disconnected
      */
     onDisconnectCallback = function() {
-
         game.writeLog("Player " + game.playerID + " disconnected");
     },
 
@@ -80,9 +69,8 @@ var Connection = function(game) {
      * param element: html element id to be connected ('p1' or 'p2')
      */
     this.connect = function() {
-
-        /* Creates an IO Socket with the server address binding on PORT */
-        that.socket = new io(SERVER_ADDR + ":" + PORT);
+        /* Creates an IO Socket with the server address binding on port */
+        that.socket = new io(SERVER_ADDR);
 
         that.socket.on('connect', onConnectCallback);
         that.socket.on('message', onMessageCallback);
@@ -90,7 +78,6 @@ var Connection = function(game) {
 
         that.socket.connect();
     };
-
 
     h3 = document.getElementById('canvas_header');
 };

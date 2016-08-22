@@ -3,8 +3,8 @@
  */
 var Server = (function(){
 
+    var clients = [];
     var PORT = process.env.PORT || 3000,
-
         START_MSG = "start",
 
         express = require('express'),
@@ -17,11 +17,11 @@ var Server = (function(){
         player1 = undefined,
         player2 = undefined,
 
+
         /**
          * Connection server answer
          */
         serverAnswer = function(req, res) {
-
             // Send HTML headers and message
             res.header("Access-Control-Allow-Origin", "*")
             res.sendFile(__dirname + '/index.html');
@@ -32,16 +32,11 @@ var Server = (function(){
          * Callback of messages sent by players
          */
         msgFromPlayer = function(message, player) {
-
             /* Send start message for all players */
-            if (message == START_MSG) {
+            if (message === START_MSG) {
                 sendAll(message);
-                return;
-
-            } else if (player == player1.id) {
-                player2.send(message);
             } else {
-                player1.send(message);
+                sendAll(message, [player]);
             }
         },
 
@@ -49,45 +44,55 @@ var Server = (function(){
         /*
          * Broadcast message to all clients
          */
-        sendAll = function (msg){
-            player1.send(msg);
-            player2.send(msg);
+        sendAll = function (msg, except){
+            if (typeof except === "undefined") {
+                except = [];
+            }
+
+            clients.filter(function(client) {
+                return except.indexOf(client) === -1
+            }).forEach(function(client) {
+                client.send(msg);
+            });
         },
 
         /**
          * Client connection callback
          */
         onConnectionCallback = function (client) {
+            clients.push(client);
 
             // If not exists a player 1, create it
             if (!player1) {
-
                 player1 = client;
-                player1.on('message', msgFromPlayer);
-                player1.on('disconnect', onDisconnect);
                 console.log("player 1 Connected");
 
             // If not exists player 2, create it
             } else if (!player2) {
-
                 player2 = client;
-                player2.on('message', msgFromPlayer);
-                player2.on('disconnect', onDisconnect);
                 console.log( "player 2 connected");
 
             // Otherwise, notify client that there are too many user to play
             } else {
                 client.send({erro:'Too many Users :/'});
             }
-        },
 
-        /*
-         * When user disconnects, it sends a notification
-         * author: Gustavo Pantuza
-         * since : 09.07.2011
-         */
-        onDisconnect = function () {
-            console.log('Server has disconnected');
+            client.on('message', msgFromPlayer);
+            client.on('disconnect', function() {
+                var i = clients.indexOf(client);
+                if (i !== -1) {
+                    clients.splice(i, 1);
+                }
+
+                // TODO remove
+                if (player1 === client) {
+                    delete player1;
+                }
+
+                if (player2 === client) {
+                    delete player2;
+                }
+            });
         };
 
         /**
@@ -113,7 +118,6 @@ var Server = (function(){
             // Instantiate socket.io using the created server
             //socket = io.listen(http);
             io.on('connection', onConnectionCallback);
-
         })();
 
 
